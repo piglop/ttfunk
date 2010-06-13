@@ -38,6 +38,9 @@ puts "descent   : #{file.descent}"
 puts "line gap  : #{file.line_gap}"
 puts "bbox      : (%d,%d)-(%d,%d)" % file.bbox
 
+puts "-- ASCII CHARACTER -> GLYPH LOOKUP --------"
+character_lookup(file, "a")
+
 puts "-- SIMPLE CHARACTER -> GLYPH LOOKUP --------"
 character_lookup(file, "\xE2\x98\x9C")
 

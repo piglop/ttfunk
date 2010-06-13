@@ -83,12 +83,27 @@ module TTFunk
     end
 
     def glyph_outlines
-      @glyph_outlines ||= TTFunk::Table::Glyf.new(self)
+      if ttf?
+        @glyph_outlines ||= TTFunk::Table::Glyf.new(self)
+      elsif otf?
+        @glyph_outlines ||= TTFunk::Table::CFF.new(self)
+      else
+        raise "No glyph outlines found"
+      end
+    end
+    
+    def ttf?
+      !!directory_info("glyf")
+    end
+    
+    def otf?
+      !!directory_info("CFF ")
     end
   end   
 end
 
 require "ttfunk/table/cmap"
+require "ttfunk/table/cff"
 require "ttfunk/table/glyf"
 require "ttfunk/table/head"
 require "ttfunk/table/hhea"
