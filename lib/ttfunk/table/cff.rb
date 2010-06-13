@@ -34,6 +34,7 @@ module TTFunk
             
             dict = parse_dict(offset, top_dict_offsets[i + 1])
             p dict
+            p parse_top_dict(dict)
           end
           
           
@@ -132,6 +133,83 @@ module TTFunk
             end
           end
           dict
+        end
+        
+        def get_dict_value(dict, operator, type, default)
+          operands = dict[operator]
+          if operands
+            case type
+            when :sid
+              operands.first
+            when :number
+              operands.first
+            when :boolean
+              operands.first == 1
+            when :array
+              operands
+            when :delta
+              operands.inject([]) { |values, value| values + [(values.last || 0) + value] }
+            else
+              raise NotImplementedError, "Unsupported type: #{type.inspect}"
+            end
+          else
+            default
+          end
+        end
+        
+        def parse_top_dict(dict)
+          {
+            :version =>
+              get_dict_value(dict, 0, :sid, nil),
+            :notice =>
+              get_dict_value(dict, 1, :sid, nil),
+            :copyright =>
+              get_dict_value(dict, [12, 0], :sid, nil),
+            :full_name =>
+              get_dict_value(dict, 2, :sid, nil),
+            :family_name =>
+              get_dict_value(dict, 3, :sid, nil),
+            :weight =>
+              get_dict_value(dict, 4, :sid, nil),
+            :is_fixed_pitch =>
+              get_dict_value(dict, [12, 1], :boolean, false),
+            :italic_angle =>
+              get_dict_value(dict, [12, 2], :number, 0),
+            :underline_position =>
+              get_dict_value(dict, [12, 3], :number, -100),
+            :underline_thickness =>
+              get_dict_value(dict, [12, 4], :number, 50),
+            :paint_type =>
+              get_dict_value(dict, [12, 5], :number, 0),
+            :charstring_type =>
+              get_dict_value(dict, [12, 6], :number, 2),
+            :font_matrix =>
+              get_dict_value(dict, [12, 7], :array, [0.001, 0, 0, 0.001, 0, 0]),
+            :unique_id =>
+              get_dict_value(dict, 13, :number, nil),
+            :font_bbox =>
+              get_dict_value(dict, 5, :array, [0, 0, 0, 0]),
+            :stroke_width =>
+              get_dict_value(dict, [12, 8], :number, 0),
+            :xuid =>
+              get_dict_value(dict, 14, :array, nil),
+            :charset =>
+              get_dict_value(dict, 15, :number, 0),
+            :encoding =>
+              get_dict_value(dict, 16, :number, 0),
+            :char_strings =>
+              get_dict_value(dict, 17, :number, nil),
+            :private =>
+              get_dict_value(dict, 18, :array, nil),
+            :syntetic_base =>
+              get_dict_value(dict, [12, 20], :number, nil),
+            :post_script =>
+              get_dict_value(dict, [12, 21], :sid, nil),
+            :base_font_name =>
+              get_dict_value(dict, [12, 22], :sid, nil),
+            :base_font_blend =>
+              get_dict_value(dict, [12, 23], :delta, nil),
+          }
         end
     end
   end
