@@ -149,6 +149,8 @@ module TTFunk
               operands
             when :delta
               operands.inject([]) { |values, value| values + [(values.last || 0) + value] }
+            when Array
+              operands
             else
               raise NotImplementedError, "Unsupported type: #{type.inspect}"
             end
@@ -200,7 +202,7 @@ module TTFunk
             :char_strings =>
               get_dict_value(dict, 17, :number, nil),
             :private =>
-              get_dict_value(dict, 18, :array, nil),
+              get_dict_value(dict, 18, [:number, :number], nil),
             :syntetic_base =>
               get_dict_value(dict, [12, 20], :number, nil),
             :post_script =>
@@ -209,6 +211,26 @@ module TTFunk
               get_dict_value(dict, [12, 22], :sid, nil),
             :base_font_blend =>
               get_dict_value(dict, [12, 23], :delta, nil),
+            
+            # CIDFont Operator Extensions
+            :ros => 
+              get_dict_value(dict, [12, 30], [:sid, :sid, :number], nil),
+            :cid_font_version => 
+              get_dict_value(dict, [12, 31], :number, 0),
+            :cid_font_revision => 
+              get_dict_value(dict, [12, 32], :number, 0),
+            :cid_font_type => 
+              get_dict_value(dict, [12, 33], :number, 0),
+            :cid_count => 
+              get_dict_value(dict, [12, 34], :number, 8720),
+            :uid_base => 
+              get_dict_value(dict, [12, 35], :number, nil),
+            :fd_array => 
+              get_dict_value(dict, [12, 36], :number, nil),
+            :fd_select => 
+              get_dict_value(dict, [12, 37], :number, nil),
+            :font_name => 
+              get_dict_value(dict, [12, 38], :sid, nil),
           }
         end
     end
